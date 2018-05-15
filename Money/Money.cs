@@ -2,7 +2,7 @@
 
 namespace Moneyclass
 {
-    class Money
+    class Money 
     {
         public int Grivna { get; private set; }
         public int Cent { get; private set; }
@@ -20,10 +20,10 @@ namespace Moneyclass
         }
         public Money(int amount)
         {
-            this.Grivna = (int)amount/100;
-            this.Cent = amount- 100*((int)amount / 100);
+            this.Grivna = (int)amount / 100;
+            this.Cent = amount - 100 * ((int)amount / 100);
         }
-        
+
         public Money(int grn, int kop)
         {
             this.Grivna = grn;
@@ -54,28 +54,114 @@ namespace Moneyclass
             return (int)amount;
         }
 
+
+        //додавання грошей    
         public static Money operator +(Money m1, Money m2)
         {
-            return new Money(m1.Grivna + m2.Grivna, m1.Cent + m2.Cent);
+
+            return new Money(AsCent(m1) + AsCent(m2));
         }
 
+        //віднімання грошей
         public static Money operator -(Money m1, Money m2)
         {
-            return new Money(m1.Grivna - m2.Grivna, m1.Cent - m2.Cent);
+            try
+            {
+                if (AsCent(m1) < AsCent(m2))
+                {
+                    throw new Exception("Сударь, вы банкрот!");
+                }
+                else
+                {
+                    return new Money(AsCent(m1) - AsCent(m2));
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+
         }
 
-        public static Money operator /(Money m1,int number)
+        //ділення грошей на число
+        public static Money operator /(Money m1, int number)
         {
             int temp = AsCent(m1) / number;
             return new Money(temp);
         }
+
+        //множення грошей на число
         public static Money operator *(Money m1, int number)
         {
-            int temp = AsCent(m1)*number;
+            int temp = AsCent(m1) * number;
 
             return new Money(temp);
         }
 
+        //перезавантаження інкремента
+        public static Money operator ++(Money m)
+        {
+            int temp = AsCent(m);
+            temp++;
+            return new Money(temp);
+        }
+
+
+        //перезавантаження декремента
+        public static Money operator --(Money m)
+        {
+            try
+            {
+                if (AsCent(m) <= 0)
+                {
+                    throw new Exception("Сударь, вы банкрот!");
+                }
+                else
+                {
+                    int temp = AsCent(m);
+                    temp--;
+                    return new Money(temp);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        public override bool Equals(object m)
+        {
+            return AsCent(this) == AsCent(m as Money);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();  
+        }
+
+       
+
+        public static bool operator ==(Money m1, Money m2)
+        {
+            return m1.Equals(m2);
+        }
+
+        public static bool operator !=(Money m1, Money m2)
+        {
+            return !(m1==m2);
+        }
+
+        public static bool operator >(Money m1, Money m2)
+        {
+            return AsCent(m1)> AsCent(m2);
+        }
+
+        public static bool operator <(Money m1, Money m2)
+        {
+            return AsCent(m1) < AsCent(m2);
+        }
 
 
     }
